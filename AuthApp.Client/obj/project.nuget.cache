@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "DBBD/FnRq1M=",
+  "dgSpecHash": "LGBr0Ott7TU=",
   "success": true,
   "projectFilePath": "X:\\Tech Project\\WebApp\\SimpleAuthApp\\AuthApp.Client\\AuthApp.Client.csproj",
   "expectedPackageFiles": [
@@ -40,10 +40,15 @@
     "C:\\Users\\user\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\10.0.2\\microsoft.extensions.options.configurationextensions.10.0.2.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.2\\microsoft.extensions.primitives.10.0.2.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.extensions.validation\\10.0.2\\microsoft.extensions.validation.10.0.2.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.identitymodel.abstractions\\8.15.0\\microsoft.identitymodel.abstractions.8.15.0.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\8.15.0\\microsoft.identitymodel.jsonwebtokens.8.15.0.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.identitymodel.logging\\8.15.0\\microsoft.identitymodel.logging.8.15.0.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.15.0\\microsoft.identitymodel.tokens.8.15.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.jsinterop\\10.0.2\\microsoft.jsinterop.10.0.2.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.jsinterop.webassembly\\10.0.2\\microsoft.jsinterop.webassembly.10.0.2.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.net.illink.tasks\\10.0.2\\microsoft.net.illink.tasks.10.0.2.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.net.sdk.webassembly.pack\\10.0.2\\microsoft.net.sdk.webassembly.pack.10.0.2.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.15.0\\system.identitymodel.tokens.jwt.8.15.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.netcore.app.runtime.mono.browser-wasm\\10.0.2\\microsoft.netcore.app.runtime.mono.browser-wasm.10.0.2.nupkg.sha512"
   ],
   "logs": []

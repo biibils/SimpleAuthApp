@@ -1,7 +1,12 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using AuthApp.Application.DTOs;
 using AuthApp.Application.Interfaces;
 using AuthApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AuthApp.Application.Services;
 
@@ -9,9 +14,10 @@ public class AuthService : IAuthService
 {
     private readonly IApplicationDbContext _context;
 
-    public AuthService(IApplicationDbContext context)
+    public AuthService(IApplicationDbContext context, IConfiguration config)
     {
         _context = context;
+        _config = config;
     }
 
     public async Task<string> RegisterAsync(RegisterRequest request)
@@ -57,11 +63,37 @@ public class AuthService : IAuthService
         return new LoginResponse(true, token, "Login Berhasil!");
     }
 
+    private readonly IConfiguration _config;
+
     private string GenerateJwtToken(User user)
     {
-        // Di sini biasanya kita pakai library System.IdentityModel.Tokens.Jwt
-        // Untuk saat ini, kita asumsikan return string token dummy
-        // sampai kita setup Jwt di Program.cs API
-        return "dummy-token-untuk-" + user.Username;
+        var jwtSettings = _config.GetSection("Jwt");
+        var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]!);
+
+        // Payload: Informasi yang ditanam di dalam token
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role), // PENTING: Untuk Admin Page
+        };
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddDays(1), // Token hangus dalam 1 hari
+            Issuer = jwtSettings["Issuer"],
+            Audience = jwtSettings["Audience"],
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature
+            ),
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+
+        return tokenHandler.WriteToken(token);
     }
 }
