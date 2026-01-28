@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="AuthApp.Application/AuthApp.Application.csproj" />
+  <Project Path="AuthApp.Client/AuthApp.Client.csproj" />
+  <Project Path="AuthApp.Domain/AuthApp.Domain.csproj" />
+  <Project Path="AuthApp.Infrastructure/AuthApp.Infrastructure.csproj" />
+  <Project Path="AuthApp.WebAPI/AuthApp.WebAPI.csproj" />
+</Solution>
