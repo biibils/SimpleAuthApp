@@ -36,4 +36,32 @@ public class AuthService : IAuthService
 
         return "Registrasi berhasil!";
     }
+
+    public async Task<LoginResponse> LoginAsync(LoginRequest request)
+    {
+        // 1. Cari user berdasarkan email
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+        if (user == null)
+            return new LoginResponse(false, "", "Email atau Password salah.");
+
+        // 2. Verifikasi Password (BCrypt akan bandingkan plain text dengan hash)
+        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+
+        if (!isPasswordValid)
+            return new LoginResponse(false, "", "Email atau Password salah.");
+
+        // 3. Generate Token (Kita akan panggil helper method di sini)
+        var token = GenerateJwtToken(user);
+
+        return new LoginResponse(true, token, "Login Berhasil!");
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        // Di sini biasanya kita pakai library System.IdentityModel.Tokens.Jwt
+        // Untuk saat ini, kita asumsikan return string token dummy
+        // sampai kita setup Jwt di Program.cs API
+        return "dummy-token-untuk-" + user.Username;
+    }
 }

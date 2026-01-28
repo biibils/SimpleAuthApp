@@ -21,4 +21,14 @@ public class AuthController(IAuthService authService) : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginRequest request)
+    {
+        var result = await authService.LoginAsync(request);
+        if (!result.Success)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
 }

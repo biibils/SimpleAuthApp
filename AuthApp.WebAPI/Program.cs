@@ -1,7 +1,10 @@
+using System.Text;
 using AuthApp.Application.Interfaces;
 using AuthApp.Application.Services;
 using AuthApp.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,31 @@ builder.Services.AddScoped<IApplicationDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>()
 );
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]!);
+
+builder
+    .Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
