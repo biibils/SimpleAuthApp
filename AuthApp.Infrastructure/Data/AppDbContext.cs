@@ -1,9 +1,10 @@
+using AuthApp.Application.Interfaces;
 using AuthApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthApp.Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : DbContext, IApplicationDbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options) { }
