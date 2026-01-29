@@ -14,6 +14,8 @@ public class AuthService : IAuthService
 {
     private readonly IApplicationDbContext _context;
 
+    private readonly IConfiguration _config;
+
     public AuthService(IApplicationDbContext context, IConfiguration config)
     {
         _context = context;
@@ -63,7 +65,10 @@ public class AuthService : IAuthService
         return new LoginResponse(true, token, "Login Berhasil!");
     }
 
-    private readonly IConfiguration _config;
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        return await _context.Users.ToListAsync();
+    }
 
     private string GenerateJwtToken(User user)
     {

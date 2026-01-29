@@ -1,5 +1,6 @@
 using AuthApp.Application.DTOs;
 using AuthApp.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthApp.Api.Controllers;
@@ -30,5 +31,13 @@ public class AuthController(IAuthService authService) : ControllerBase
             return BadRequest(result);
 
         return Ok(result);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("users")]
+    public async Task<IActionResult> GetUsers()
+    {
+        var users = await authService.GetAllUsersAsync();
+        return Ok(users);
     }
 }
