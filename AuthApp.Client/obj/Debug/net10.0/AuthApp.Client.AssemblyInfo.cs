@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AuthApp.Client")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d168df17971f39d91ecd697773fe6bf9872da691")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+feeebe04a830e890a41be159097eeb7bc88457f1")]
 [assembly: System.Reflection.AssemblyProductAttribute("AuthApp.Client")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AuthApp.Client")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

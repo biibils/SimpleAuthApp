@@ -45,6 +45,20 @@ builder
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowBlazor",
+        policy =>
+        {
+            policy
+                .WithOrigins("https://localhost:5001") // Port Blazor kamu
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        }
+    );
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +66,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseCors("AllowBlazor");
 
 app.UseHttpsRedirection();
 app.Run();

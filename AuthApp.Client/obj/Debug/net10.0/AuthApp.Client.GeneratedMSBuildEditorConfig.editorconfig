@@ -5,6 +5,9 @@ build_property.EnableTrimAnalyzer = false
 build_property.IncludeAllContentForSelfExtract = 
 build_property.VerifyReferenceTrimCompatibility = 
 build_property.VerifyReferenceAotCompatibility = 
+build_property.MudDebugAnalyzer = 
+build_property.MudAllowedAttributePattern = 
+build_property.MudAllowedAttributeList = 
 build_property.TargetFramework = net10.0
 build_property.TargetFrameworkIdentifier = .NETCoreApp
 build_property.TargetFrameworkVersion = v10.0
@@ -32,6 +35,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[X:/Tech Project/WebApp/SimpleAuthApp/AuthApp.Client/Pages/AdminUsers.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5Vc2Vycy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [X:/Tech Project/WebApp/SimpleAuthApp/AuthApp.Client/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -40,12 +47,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSG9tZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/Tech Project/WebApp/SimpleAuthApp/AuthApp.Client/Pages/NotFound.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTm90Rm91bmQucmF6b3I=
+[X:/Tech Project/WebApp/SimpleAuthApp/AuthApp.Client/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[X:/Tech Project/WebApp/SimpleAuthApp/AuthApp.Client/Pages/Weather.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2VhdGhlci5yYXpvcg==
+[X:/Tech Project/WebApp/SimpleAuthApp/AuthApp.Client/Pages/NotFound.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTm90Rm91bmQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [X:/Tech Project/WebApp/SimpleAuthApp/AuthApp.Client/_Imports.razor]

@@ -1,7 +1,69 @@
-﻿@page "/"
+﻿@page "/signup"
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject NavigationManager NavManager
 
-<PageTitle>Home</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
+    <MudPaper Elevation="4" Class="pa-8">
+        <MudText Typo="Typo.h4" GutterBottom="true">Daftar Akun</MudText>
+        <MudTextField @bind-Value="model.FullName" Label="Nama Lengkap" Variant="Variant.Outlined" Class="mb-4" />
+        <MudTextField @bind-Value="model.Email" Label="Email" Variant="Variant.Outlined" Class="mb-4" />
+        
+        <div class="d-flex gap-4">
+            <MudDatePicker Label="Tanggal Lahir" @bind-Date="selectedDate" Variant="Variant.Outlined" />
+            <MudSelect T="string" Label="Gender" @bind-Value="model.Gender" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("L")">Laki-laki</MudSelectItem>
+                <MudSelectItem Value="@("P")">Perempuan</MudSelectItem>
+            </MudSelect>
+        </div>
 
-<h1>Hello, world!</h1>
+        <MudTextField @bind-Value="model.Password" Label="Password" Variant="Variant.Outlined" 
+                      InputType="InputType.Password" Class="mt-4 mb-6" />
 
-Welcome to your new app.
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large" 
+                   OnClick="HandleRegister">Sign Up</MudButton>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private RegisterRequest model = new RegisterRequest();
+    private DateTime? selectedDate = DateTime.Today.AddYears(-18);
+		private bool isProcessing = false;
+
+    private async Task HandleRegister() 
+    {
+        isProcessing = true;
+        
+        // 1. Sinkronisasi Tanggal Lahir dari DatePicker ke Model
+        model.BirthDate = selectedDate ?? DateTime.Today.AddYears(-18);
+
+        try 
+        {
+            // 2. Kirim data ke API AuthController
+            var response = await Http.PostAsJsonAsync("api/auth/register", model);
+
+            if (response.IsSuccessStatusCode) 
+            {
+                Snackbar.Add("Registrasi Berhasil! Silakan Login.", Severity.Success);
+                // Redirect ke halaman login setelah sukses
+                NavManager.NavigateTo("/login");
+            } 
+            else 
+            {
+                // 3. Ambil pesan error dari API (jika ada)
+                var errorContent = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                var message = errorContent?.ContainsKey("message") == true ? errorContent["message"] : "Gagal daftar.";
+                
+                Snackbar.Add(message, Severity.Error);
+            }
+        } 
+        catch (Exception ex) 
+        {
+            Snackbar.Add("Terjadi kesalahan koneksi: " + ex.Message, Severity.Error);
+        }
+        finally 
+        {
+            isProcessing = false;
+        }
+    }
+}

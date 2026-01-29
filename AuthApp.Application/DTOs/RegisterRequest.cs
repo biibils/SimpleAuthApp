@@ -2,14 +2,15 @@ using FluentValidation;
 
 namespace AuthApp.Application.DTOs;
 
-public record RegisterRequest(
-    string FullName,
-    string Username,
-    string Email,
-    string Password,
-    DateTime BirthDate,
-    string Gender
-);
+public class RegisterRequest
+{
+    public string FullName { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public DateTime BirthDate { get; set; } = DateTime.Today;
+    public string Gender { get; set; } = "L";
+};
 
 public class RegisterValidator : AbstractValidator<RegisterRequest>
 {

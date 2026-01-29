@@ -1,0 +1,34 @@
+@page "/admin/users"
+@inject HttpClient Http
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-10">
+    <MudText Typo="Typo.h5" Class="mb-5">Daftar Pengguna (Admin Only)</MudText>
+    
+    <MudTable Items="@users" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="2">
+        <HeaderContent>
+            <MudTh>Nama</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Gender</MudTh>
+            <MudTh>Role</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nama">@context.FullName</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+            <MudTd DataLabel="Gender">@(context.Gender == 'L' ? "Laki-laki" : "Perempuan")</MudTd>
+            <MudTd>
+                <MudChip T="string" Color="@(context.Role == "Admin" ? Color.Error : Color.Info)" Size="Size.Small">
+                    @context.Role
+                </MudChip>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+@code {
+    private List<AuthApp.Domain.Entities.User> users = new();
+
+    protected override async Task OnInitializedAsync() {
+        // Ingat: Ini akan error 401 kalau kita belum kirim Token JWT di Header
+        users = await Http.GetFromJsonAsync<List<AuthApp.Domain.Entities.User>>("api/auth/users") ?? new();
+    }
+}
