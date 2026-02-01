@@ -10,4 +10,5 @@ public class User
     public DateTime BirthDate { get; set; }
     public char Gender { get; set; }
     public string Role { get; set; } = "User";
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

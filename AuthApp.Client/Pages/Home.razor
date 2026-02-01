@@ -1,69 +1,96 @@
-﻿@page "/signup"
+﻿@page "/"
 @inject HttpClient Http
-@inject ISnackbar Snackbar
 @inject NavigationManager NavManager
+@using AuthApp.Application.DTOs
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
-    <MudPaper Elevation="4" Class="pa-8">
-        <MudText Typo="Typo.h4" GutterBottom="true">Daftar Akun</MudText>
-        <MudTextField @bind-Value="model.FullName" Label="Nama Lengkap" Variant="Variant.Outlined" Class="mb-4" />
-        <MudTextField @bind-Value="model.Email" Label="Email" Variant="Variant.Outlined" Class="mb-4" />
-        
-        <div class="d-flex gap-4">
-            <MudDatePicker Label="Tanggal Lahir" @bind-Date="selectedDate" Variant="Variant.Outlined" />
-            <MudSelect T="string" Label="Gender" @bind-Value="model.Gender" Variant="Variant.Outlined">
-                <MudSelectItem Value="@("L")">Laki-laki</MudSelectItem>
-                <MudSelectItem Value="@("P")">Perempuan</MudSelectItem>
-            </MudSelect>
+<div style="max-width: 500px; margin: 30px auto; padding: 25px; border: 1px solid #ddd; border-radius: 10px; font-family: sans-serif;">
+    <h3 style="text-align: center;">Daftar Akun Baru</h3>
+    <hr />
+
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: bold;">Nama Lengkap:</label>
+        <input type="text" @bind="model.FullName" style="width: 100%; padding: 8px; border: 1px solid #ccc;" />
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: bold;">Email:</label>
+        <input type="email" @bind="model.Email" style="width: 100%; padding: 8px; border: 1px solid #ccc;" />
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: bold;">Password:</label>
+        <input type="password" @bind="model.Password" style="width: 100%; padding: 8px; border: 1px solid #ccc;" />
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: bold;">Tanggal Lahir:</label>
+        <input type="date" @bind="model.BirthDate" style="width: 100%; padding: 8px; border: 1px solid #ccc;" />
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: bold;">Jenis Kelamin:</label>
+        <select @bind="model.Gender" style="width: 100%; padding: 8px; border: 1px solid #ccc;">
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+        </select>
+    </div>
+
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <div style="padding: 10px; margin-bottom: 15px; border-radius: 5px; background-color: @(isError ? "#ffdce0" : "#d4edda"); color: @(isError ? "#af0606" : "#155724");">
+            @statusMessage
         </div>
+    }
 
-        <MudTextField @bind-Value="model.Password" Label="Password" Variant="Variant.Outlined" 
-                      InputType="InputType.Password" Class="mt-4 mb-6" />
+    <button @onclick="HandleRegister" disabled="@isSubmitting" style="width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+        @(isSubmitting ? "Memproses..." : "Daftar Sekarang")
+    </button>
 
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large" 
-                   OnClick="HandleRegister">Sign Up</MudButton>
-    </MudPaper>
-</MudContainer>
+    <p style="text-align: center; margin-top: 15px;">
+        Sudah punya akun? <a href="/login" style="color: #007bff; text-decoration: none;">Login di sini</a>
+    </p>
+</div>
 
 @code {
     private RegisterRequest model = new RegisterRequest();
-    private DateTime? selectedDate = DateTime.Today.AddYears(-18);
-		private bool isProcessing = false;
+    private bool isSubmitting = false;
+    private string statusMessage = "";
+    private bool isError = false;
 
-    private async Task HandleRegister() 
+    private async Task HandleRegister()
     {
-        isProcessing = true;
-        
-        // 1. Sinkronisasi Tanggal Lahir dari DatePicker ke Model
-        model.BirthDate = selectedDate ?? DateTime.Today.AddYears(-18);
+        isSubmitting = true;
+        statusMessage = "";
+        isError = false;
 
-        try 
+        try
         {
-            // 2. Kirim data ke API AuthController
-            var response = await Http.PostAsJsonAsync("api/auth/register", model);
+            var response = await Http.PostAsJsonAsync("api/Auth/register", model);
 
-            if (response.IsSuccessStatusCode) 
+            if (response.IsSuccessStatusCode)
             {
-                Snackbar.Add("Registrasi Berhasil! Silakan Login.", Severity.Success);
-                // Redirect ke halaman login setelah sukses
+                statusMessage = "Registrasi Berhasil! Mengalihkan ke halaman login...";
+                StateHasChanged(); // Update tampilan
+                await Task.Delay(2000); // Tunggu sebentar biar user baca suksesnya
                 NavManager.NavigateTo("/login");
-            } 
-            else 
-            {
-                // 3. Ambil pesan error dari API (jika ada)
-                var errorContent = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                var message = errorContent?.ContainsKey("message") == true ? errorContent["message"] : "Gagal daftar.";
-                
-                Snackbar.Add(message, Severity.Error);
             }
-        } 
-        catch (Exception ex) 
-        {
-            Snackbar.Add("Terjadi kesalahan koneksi: " + ex.Message, Severity.Error);
+            else
+            {
+                isError = true;
+                // Ambil detail error dari API (biasanya dari FluentValidation)
+                var errorBody = await response.Content.ReadAsStringAsync();
+                statusMessage = $"Gagal: {errorBody}";
+            }
         }
-        finally 
+        catch (Exception ex)
         {
-            isProcessing = false;
+            isError = true;
+            statusMessage = "Error koneksi ke API: " + ex.Message;
+            Console.WriteLine(ex.ToString());
+        }
+        finally
+        {
+            isSubmitting = false;
         }
     }
 }

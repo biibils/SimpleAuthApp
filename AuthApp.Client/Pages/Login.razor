@@ -1,69 +1,74 @@
 @page "/login"
 @inject HttpClient Http
-@inject ILocalStorageService LocalStorage
-@inject ApiAuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavManager
-@inject ISnackbar Snackbar
-@using Blazored.LocalStorage
-@using MudBlazor
+@inject ILocalStorageService LocalStorage
+@using AuthApp.Application.DTOs
 
-<MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="mt-16">
-    <MudPaper Class="pa-8">
-        <MudText Typo="Typo.h4" Class="mb-6">Login</MudText>
-        <MudTextField @bind-Value="loginModel.Email" Label="Email" Variant="Variant.Outlined" Class="mb-4"/>
-        <MudTextField @bind-Value="loginModel.Password" Label="Password" InputType="InputType.Password" Variant="Variant.Outlined" Class="mb-6"/>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="SubmitLogin">Login</MudButton>
-    </MudPaper>
-</MudContainer>
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+    <h3>Login</h3>
+    <hr />
+
+    <div style="margin-bottom: 15px;">
+        <label>Email:</label>
+        <input type="email" @bind="loginModel.Email" class="form-control" style="width: 100%; padding: 8px;" />
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label>Password:</label>
+        <input type="password" @bind="loginModel.Password" class="form-control" style="width: 100%; padding: 8px;" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div style="color: red; margin-bottom: 15px;">@errorMessage</div>
+    }
+
+    <button @onclick="SubmitLogin" disabled="@isLoggingIn" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+        @(isLoggingIn ? "Loading..." : "Login")
+    </button>
+</div>
 
 @code {
-    private LoginRequest loginModel = new LoginRequest();
-		private bool isLoggingIn;
+    private LoginRequest loginModel = new();
+    private bool isLoggingIn = false;
+    private string errorMessage = "";
 
     private async Task SubmitLogin()
     {
+        errorMessage = "";
         isLoggingIn = true;
-    try 
-    {
-        var result = await Http.PostAsJsonAsync("api/auth/login", loginModel);
-        
-        if (result.IsSuccessStatusCode)
+
+        try 
         {
-            // Tambahkan tanda tanya (?) setelah LoginResponse agar dianggap nullable
-            var response = await result.Content.ReadFromJsonAsync<LoginResponse>();
+            var result = await Http.PostAsJsonAsync("api/auth/login", loginModel);
             
-            // Cek apakah response TIDAK NULL dan Success
-            if (response != null && response.Success)
+            if (result.IsSuccessStatusCode)
             {
-                // Gunakan pengecekan ! atau null-check untuk menghilangkan warning
-                await LocalStorage.SetItemAsync("authToken", response.Token);
+                var response = await result.Content.ReadFromJsonAsync<LoginResponse>();
                 
-                // Pastikan AuthStateProvider kita panggil dengan aman
-                var authProvider = (ApiAuthenticationStateProvider)AuthStateProvider;
-                authProvider.MarkUserAsAuthenticated(response.Token);
-                
-                Snackbar.Add("Login Berhasil!", Severity.Success);
-                NavManager.NavigateTo("/");
+                if (response != null && response.Success)
+                {
+                    await LocalStorage.SetItemAsync("authToken", response.Token);
+                    NavManager.NavigateTo("/");
+                }
+                else
+                {
+                    errorMessage = response?.Message ?? "Login gagal.";
+                }
             }
             else 
             {
-                // Jika response null atau success false
-                Snackbar.Add(response?.Message ?? "Gagal Login.", Severity.Error);
+                errorMessage = "Email atau Password salah (401/404).";
             }
         }
-        else 
+        catch (Exception ex)
         {
-            Snackbar.Add("Email atau Password salah.", Severity.Error);
+            errorMessage = "Koneksi ke server gagal.";
+            Console.WriteLine(ex.Message);
         }
-    }
-    catch (Exception ex)
-    {
-        Snackbar.Add("Gagal terhubung ke server.", Severity.Error);
-				Console.WriteLine(ex.ToString());
-    }
-    finally 
-    {
-        isLoggingIn = false;
-    }
+        finally 
+        {
+            isLoggingIn = false;
+        }
     }
 }

@@ -8,13 +8,18 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "AuthApp API", Version = "v1" });
+});
+
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-builder.Services.AddControllers();
+
 builder.Services.AddScoped<IApplicationDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>()
 );
@@ -52,7 +57,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("https://localhost:5001") // Port Blazor kamu
+                .WithOrigins("http://localhost:5280") // Port Blazor kamu
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         }
@@ -64,10 +69,18 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthApp API V1");
+    });
 }
 
-app.UseCors("AllowBlazor");
-
 app.UseHttpsRedirection();
+app.UseCors("AllowBlazor");
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
 app.Run();

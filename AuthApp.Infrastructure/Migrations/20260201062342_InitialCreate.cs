@@ -22,7 +22,8 @@ namespace AuthApp.Infrastructure.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "User")
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "User"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {

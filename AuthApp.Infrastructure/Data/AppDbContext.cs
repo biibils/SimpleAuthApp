@@ -25,6 +25,7 @@ public class AppDbContext : DbContext, IApplicationDbContext
             entity.Property(e => e.FullName).HasMaxLength(100).IsRequired();
             entity.Property(e => e.Gender).HasMaxLength(1);
             entity.Property(e => e.Role).HasDefaultValue("User");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
         });
     }
 }
